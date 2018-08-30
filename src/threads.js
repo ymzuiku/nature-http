@@ -2,7 +2,7 @@ const cluster = require('cluster');
 let cpuCounts = require('os').cpus().length;
 cpuCounts = cpuCounts === 2 ? 1 : cpuCounts;
 
-const isDev = process.env.NODE_ENV === 'development' || process.env.dev;
+const isDev = process.env.prod === undefined;
 
 module.exports = function(task) {
   if (cluster.isMaster) {
@@ -12,7 +12,7 @@ module.exports = function(task) {
     }
     cluster.on('exit', (worker, code, signal) => {
       console.log(`worker ${worker.process.pid} exit`);
-      if (isDev === false) {
+      if (!isDev) {
         console.log(`new worker fork`);
         cluster.fork();
       }
